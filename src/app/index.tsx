@@ -1,98 +1,85 @@
-import * as Device from 'expo-device';
-import { Platform, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useState } from 'react';
+import { Alert, Image, Pressable, StyleSheet, View } from 'react-native';
 
-import { AnimatedIcon } from '@/components/animated-icon';
-import { HintRow } from '@/components/hint-row';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-
-function getDevMenuHint() {
-  if (Platform.OS === 'web') {
-    return <ThemedText type="small">use browser devtools</ThemedText>;
-  }
-  if (Device.isDevice) {
-    return (
-      <ThemedText type="small">
-        shake device or press <ThemedText type="code">m</ThemedText> in terminal
-      </ThemedText>
-    );
-  }
-  const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
-  return (
-    <ThemedText type="small">
-      press <ThemedText type="code">{shortcut}</ThemedText>
-    </ThemedText>
-  );
-}
-
+// Display
 export default function HomeScreen() {
+  {/* state for the dice roll value */}
+  const [roll, setRoll] = useState(20);
+  
   return (
-    <ThemedView style={styles.container}>
-      <SafeAreaView style={styles.safeArea}>
-        <ThemedView style={styles.heroSection}>
-          <AnimatedIcon />
-          <ThemedText type="title" style={styles.title}>
-            Welcome to&nbsp;Expo
-          </ThemedText>
-        </ThemedView>
+    <View style={styles.container}>
+      {/* background image */}
+      <Image
+        source={require('C:/Users/hanch/diceroll-app/assets/images/background.png')}
+        style={styles.background}
+      />
 
-        <ThemedText type="code" style={styles.code}>
-          get started
-        </ThemedText>
+      {/* d20 dice image */}
+      <Image
+        source={require('C:/Users/hanch/diceroll-app/assets/images/d20Dice.png')}
+        style={styles.d20Dice}
+        resizeMode="contain"
+      />
 
-        <ThemedView type="backgroundElement" style={styles.stepContainer}>
-          <HintRow
-            title="Try editing"
-            hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-          />
-          <HintRow title="Dev tools" hint={getDevMenuHint()} />
-          <HintRow
-            title="Fresh start"
-            hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-          />
-        </ThemedView>
-
-        {Platform.OS === 'web' && <WebBadge />}
-      </SafeAreaView>
-    </ThemedView>
+      {/* roll dice button */}
+      <Pressable
+        style={styles.rerollButton}
+        onPress={() => {
+          const newRoll = Math.floor(Math.random() * 20) + 1;
+          setRoll(newRoll);
+          Alert.alert('Reroll', `You rolled a ${newRoll}!`);
+        }}
+      >
+        <Image
+          source={require('C:/Users/hanch/diceroll-app/assets/images/rerollButton.png')}
+          style={{ width: '100%', height: '100%' }}
+          resizeMode="contain"
+        />
+      </Pressable>
+      
+      {/* change dice button */}
+      <Pressable
+        style={styles.changeDiceButton}
+        onPress={() => Alert.alert('Change Dice', 'Choose your dice type (WIP)')}
+      >
+        <Image
+          source={require('C:/Users/hanch/diceroll-app/assets/images/changeDiceButton.png')}
+          style={{ width: '100%', height: '100%' }}
+          resizeMode="contain"
+        />
+      </Pressable>
+      </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
   },
-  safeArea: {
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingBottom: BottomTabInset + Spacing.three,
-    maxWidth: MaxContentWidth,
+  background: {
+    width: '100%',
+    height: '100%'
   },
-  heroSection: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
-    paddingHorizontal: Spacing.four,
-    gap: Spacing.four,
+  changeDiceButton: {
+    position: 'absolute',
+    top: '10%',
+    alignSelf: 'center',
+    width: 160,
+    height: 85,
+    resizeMode: 'contain',
   },
-  title: {
-    textAlign: 'center',
+  d20Dice: {
+    position: 'absolute',
+    top: '40%',
+    alignSelf: 'center',
+    width: 200,
+    height: 200,
   },
-  code: {
-    textTransform: 'uppercase',
-  },
-  stepContainer: {
-    gap: Spacing.three,
-    alignSelf: 'stretch',
-    paddingHorizontal: Spacing.three,
-    paddingVertical: Spacing.four,
-    borderRadius: Spacing.four,
+  rerollButton: {
+    position: 'absolute',
+    bottom: '20%',
+    alignSelf: 'center',
+    width: 300,
+    height: 100,
   },
 });
